@@ -1,5 +1,7 @@
 package org.example;
+
 import java.util.logging.Logger;
+
 public class StudentManager {
     private static final Logger logger = Logger.getLogger(StudentManager.class.getName());
     private String[] students = new String[100];
@@ -7,10 +9,11 @@ public class StudentManager {
 
     public void addStudent(String name) {
         if (name == null) {
-            logger.warning("Name is null");
+            logger.warning("Name is null"); // Issue #3
         } else {
             students[count] = name;
             count++;
+            logger.info("Added student: " + name); // Issue #4
         }
     }
 
@@ -28,6 +31,7 @@ public class StudentManager {
             if (students[i].equals(name)) {
                 students[i] = students[count - 1];
                 count--;
+                return;
             }
         }
     }
