@@ -1,6 +1,6 @@
 # Báo cáo: Phân tích và cải thiện chất lượng mã nguồn với SonarQube
 
-**Họ tên**: Mạc Anh Đức
+**Học viên**: Mạc Anh Đức
 
 **MSSV**: BIT220221
 
@@ -8,17 +8,38 @@
 
 ---
 
-## Ảnh minh hoạ: Toàn bộ vấn đề đã khắc phục
+## 1. Cài đặt và cấu hình SonarQube & SonarScanner
 
-![No Issues](./assets/sonarqube-no-issues.png)
+### Cài đặt SonarQube
+
+* Truy cập: [https://www.sonarsource.com/products/sonarqube/downloads/](https://www.sonarsource.com/products/sonarqube/downloads/)
+* Tải bản **Community Edition** → giải nén thư mục
+* Mở `StartSonar.bat` (Windows) tại: `sonarqube/bin/windows-x86-64/StartSonar.bat`
+* Truy cập trình duyệt: [http://localhost:9000](http://localhost:9000)
+* Đăng nhập: `admin/admin` → đổi mật khẩu
+* Tạo **user token** tại: **Account → My Account → Security**
+
+*Ảnh minh họa tạo token:*
+![Token](./assets/token-sonarqube.png)
 
 ---
 
-## 1. Cài đặt và cấu hình SonarQube
+### Cài đặt SonarScanner
 
-* Cài SonarQube Community Edition trên Windows
-* Truy cập: [http://localhost:9000](http://localhost:9000)
-* Tạo token và chỉnh file `sonar-project.properties`:
+* Tải tại: [https://docs.sonarsource.com/sonarqube/latest/analysis/scan/sonarscanner/](https://docs.sonarsource.com/sonarqube/latest/analysis/scan/sonarscanner/)
+* Giải nén và thêm đường dẫn `bin` vào biến môi trường `PATH`
+* Kiểm tra bằng lệnh:
+
+```bash
+sonar-scanner -v
+```
+
+*Kết quả kiểm tra:*
+![Scanner Version](./assets/sonar-scanner-version.png)
+
+---
+
+## 2. Tạo cấu hình `sonar-project.properties`
 
 ```properties
 sonar.projectKey=student-management
@@ -32,10 +53,11 @@ sonar.login=<your_token>
 
 ---
 
-## 2. Vấn đề phát hiện ban đầu từ SonarQube
+## 3. Các vấn đề được phát hiện ban đầu bởi SonarQube
 
-![Issues Part 1](./assets/sonarqube-initial-issues-1.png)
-![Issues Part 2](./assets/sonarqube-initial-issues-2.png)
+*Ảnh minh họa:*
+![Issues 1](./assets/sonarqube-initial-issues-1.png)
+![Issues 2](./assets/sonarqube-initial-issues-2.png)
 
 | STT | File                | Dòng | Loại       | Mô tả                                            |
 | --- | ------------------- | ---- | ---------- | ------------------------------------------------ |
@@ -48,7 +70,7 @@ sonar.login=<your_token>
 
 ---
 
-## 3. Mã nguồn sau khi cải thiện
+## 4. Mã nguồn sau khi cải thiện
 
 ### Trước:
 
@@ -62,7 +84,7 @@ System.out.println("Removed student: " + name);
 logger.info(String.format("Removed student: %s", name));
 ```
 
-### Xử lý thêm:
+### Trích đoạn xử lý null:
 
 ```java
 if (name == null || name.trim().isEmpty()) {
@@ -71,13 +93,15 @@ if (name == null || name.trim().isEmpty()) {
 }
 ```
 
+*Sau khi sửa, không còn lỗi:*
+![No Issues](./assets/sonarqube-no-issues.png)
+
 ---
 
-## 4. Kiểm thỮd đơn vị với JUnit
+## 5. Kiểm thử đơn vị với JUnit
 
-### Ảnh minh hoạ:
-
-![JUnit Pass](./assets/junit-test-passed.png)
+*Ảnh minh hoạ kết quả test:*
+![JUnit Passed](./assets/junit-test-passed.png)
 
 ### File `StudentManagerTest.java`
 
@@ -92,27 +116,23 @@ class StudentManagerTest {
         sm.addStudent("Alice");
         assertEquals("Alice", sm.findStudent("Alice"));
     }
-
     @Test void testRemoveStudent() {
         StudentManager sm = new StudentManager();
         sm.addStudent("Bob");
         sm.removeStudent("Bob");
         assertNull(sm.findStudent("Bob"));
     }
-
     @Test void testNullInput() {
         StudentManager sm = new StudentManager();
         sm.addStudent(null);
         assertNull(sm.findStudent(null));
     }
-
     @Test void testAddStudentWhenFull() {
         StudentManager sm = new StudentManager();
         for (int i = 0; i < 100; i++) sm.addStudent("S" + i);
         sm.addStudent("Overflow");
         assertNull(sm.findStudent("Overflow"));
     }
-
     @Test void testRemoveNonexistentStudent() {
         StudentManager sm = new StudentManager();
         sm.addStudent("Alice");
@@ -124,8 +144,9 @@ class StudentManagerTest {
 
 ---
 
-## 5. Độ phủ mã (Code Coverage)
+## 6. Độ phủ mã (Code Coverage)
 
+*Ảnh từ SonarQube:*
 ![Coverage](./assets/sonarqube-coverage.png)
 
 * **Coverage**: 74.5%
@@ -134,20 +155,20 @@ class StudentManagerTest {
 
 ---
 
-## 6. Đánh giá và đối chiếu
+## 7. Đánh giá và đối chiếu kết quả
 
 | Tiêu chí               | Trước khi sửa | Sau khi cải thiện |
-| ---------------------- | ------------- | ----------------- |
-| Code Smells            | 6             | 0                 |
-| Bugs / Vulnerabilities | 0             | 0                 |
-| Test Pass              | Chưa test     | ✔ 100%            |
-| Coverage               | 0%            | ✔ 74.5%           |
+| ---------------------- | ------------- | ------------- |
+| Code Smells            | 6             | 0             |
+| Bugs / Vulnerabilities | 0             | 0             |
+| Test Pass              | Chưa test     | 100%          |
+| Coverage               | 0%            | 74.5%         |
 
 ---
 
-## 7. Kết luận và đánh giá cá nhân
+## 8. Kết luận và đánh giá cá nhân
 
-Việc sử dụng **SonarQube** đã mang lại cho em một cái nhìn rõ ràng hơn về chất lượng mã nguồn của chính mình. Trước đây, em chỉ tập trung làm sao cho chương trình chạy đúng và qua được các test case. Tuy nhiên, sau khi tích hợp SonarQube, em đã ý thức được tầm quan trọng của việc viết mã sạch, rõ ràng và dễ bảo trì.
+Việc sử dụng SonarQube đã mang lại cho em một cái nhìn rõ ràng hơn về chất lượng mã nguồn của chính mình. Trước đây, em chỉ tập trung làm sao cho chương trình chạy đúng và qua được các test case. Tuy nhiên, sau khi tích hợp SonarQube, em đã ý thức được tầm quan trọng của việc viết mã sạch, rõ ràng và dễ bảo trì.
 
 Những vấn đề như dùng `System.out.println` thay vì `Logger`, hoặc gọi `String.format()` không có điều kiện có thể dễ dàng bị bỏ qua nếu không có công cụ phân tích tĩnh như SonarQube. Nhờ những cảnh báo cụ thể từ SonarQube, em đã học được cách cấu trúc lại mã nguồn hợp lý hơn, tuân thủ nguyên tắc thiết kế, và tránh được những lỗi nhỏ nhưng ảnh hưởng đến maintainability.
 

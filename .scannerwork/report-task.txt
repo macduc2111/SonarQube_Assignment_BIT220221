@@ -2,5 +2,5 @@ projectKey=student-management
 serverUrl=http://localhost:9000
 serverVersion=25.6.0.109173
 dashboardUrl=http://localhost:9000/dashboard?id=student-management
-ceTaskId=9d9da0c5-0eb0-4da9-8283-63f927ce58e3
-ceTaskUrl=http://localhost:9000/api/ce/task?id=9d9da0c5-0eb0-4da9-8283-63f927ce58e3
+ceTaskId=83e04dff-e4bc-4457-b283-5aa04ac83013
+ceTaskUrl=http://localhost:9000/api/ce/task?id=83e04dff-e4bc-4457-b283-5aa04ac83013
