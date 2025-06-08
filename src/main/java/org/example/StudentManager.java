@@ -1,12 +1,13 @@
 package org.example;
-
+import java.util.logging.Logger;
 public class StudentManager {
+    private static final Logger logger = Logger.getLogger(StudentManager.class.getName());
     private String[] students = new String[100];
     private int count = 0;
 
     public void addStudent(String name) {
         if (name == null) {
-            System.out.println("Name is null");
+            logger.warning("Name is null");
         } else {
             students[count] = name;
             count++;
